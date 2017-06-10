@@ -1,0 +1,49 @@
+version: '3'
+services:
+    aya_front:
+        image: nginx
+        ports:
+            - "80:80"
+        links:
+            - aya_app
+        volumes:
+            - "./www/app:/var/www/capital2017"
+            - "./config/nginx/vhost/app:/etc/nginx/conf.d/030-app.conf:ro"
+        container_name: aya_front
+
+    aya_app:
+        build: .
+        links:
+            - aya_mariadb
+            - aya_elasticsearch
+            - aya_mongo
+        volumes:
+            - "./config/php/php.ini:/usr/local/etc/php/conf.d/030-custom.ini:ro"
+            - "./www/app:/var/www/app"
+        ports:
+            - "9000:9000"
+        working_dir: "/var/www/app" # specify the default directory
+        container_name: aya_app
+
+    aya_mariadb:
+        image: mariadb
+        environment:
+            - "MYSQL_ROOT_PASSWORD=passroot"
+            - "MYSQL_USER=marker"
+            - "MYSQL_PASSWORD=markerPass"
+            - "MYSQL_DATABASE=market"
+        ports:
+            - "3309:3306"
+        container_name: aya_mariadb
+
+    aya_elasticsearch:
+        image: elasticsearch:1.7
+        ports:
+            - "9200:9200"
+        container_name: aya_elasticsearch
+
+    aya_mongo:
+        image: mongo:3.2
+        ports:
+            - "27017:27017"
+        container_name: aya_mongo
