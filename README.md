@@ -21,7 +21,7 @@ Start containers with docker-compose :
 $ docker-compose up -d --build
 ```
 
-Add www.app.local to the hosts file :
+Add www.app.dev to the hosts file :
 
 ```bash
 $ sudo vi /etc/hosts  # add 127.0.0.1 www.app.dev

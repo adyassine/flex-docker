@@ -21,7 +21,7 @@ if (getenv('APP_DEBUG')) {
     // Feel free to remove this, extend it, or make something more sophisticated.
     if (isset($_SERVER['HTTP_CLIENT_IP'])
         || isset($_SERVER['HTTP_X_FORWARDED_FOR'])
-        || !(in_array(@$_SERVER['REMOTE_ADDR'], ['127.0.0.1','172.23.0.1', '::1']) || PHP_SAPI === 'cli-server')
+        || !(in_array(@$_SERVER['REMOTE_ADDR'], ['127.0.0.1','::1']) || PHP_SAPI === 'cli-server')
         && getenv('APP_ENV') !== 'prod'
     ) {
         header('HTTP/1.0 403 Forbidden');

@@ -1,49 +1,193 @@
-version: '3'
+version: '2'
 services:
     aya_front:
-        image: nginx
-        ports:
-            - "80:80"
-        links:
-            - aya_app
-        volumes:
-            - "./www/app:/var/www/capital2017"
-            - "./config/nginx/vhost/app:/etc/nginx/conf.d/030-app.conf:ro"
-        container_name: aya_front
+      image: nginx:latest
+      ports:
+        - "80:80"
+      links:
+        - aya_app
+      volumes:
+        - "./www/app:/var/www/app"
+        - "./config/nginx/vhost/app:/etc/nginx/conf.d/030-app.conf:ro"
 
     aya_app:
-        build: .
-        links:
-            - aya_mariadb
-            - aya_elasticsearch
-            - aya_mongo
-        volumes:
-            - "./config/php/php.ini:/usr/local/etc/php/conf.d/030-custom.ini:ro"
-            - "./www/app:/var/www/app"
-        ports:
-            - "9000:9000"
-        working_dir: "/var/www/app" # specify the default directory
-        container_name: aya_app
+      build: .
+      links:
+        - aya_mariadb
+        - aya_elasticsearch
+        - aya_mongo
+      volumes:
+        - "./config/php/php.ini:/usr/local/etc/php/conf.d/030-custom.ini:ro"
+        - "./www/app:/var/www/app"
+      ports:
+        - "9099:9000"
+      working_dir: "/var/www/app"
 
     aya_mariadb:
-        image: mariadb
-        environment:
-            - "MYSQL_ROOT_PASSWORD=passroot"
-            - "MYSQL_USER=marker"
-            - "MYSQL_PASSWORD=markerPass"
-            - "MYSQL_DATABASE=market"
-        ports:
-            - "3309:3306"
-        container_name: aya_mariadb
+      image: mariadb:latest
+      environment:
+        - "MYSQL_ROOT_PASSWORD=passroot"
+        - "MYSQL_USER=appuser"
+        - "MYSQL_PASSWORD=userPass"
+        - "MYSQL_DATABASE=app"
+      ports:
+        - "3399:3306"
 
     aya_elasticsearch:
-        image: elasticsearch:1.7
-        ports:
-            - "9200:9200"
-        container_name: aya_elasticsearch
+      image: elasticsearch:latest
+      ports:
+        - "9299:9200"
 
     aya_mongo:
-        image: mongo:3.2
-        ports:
-            - "27017:27017"
-        container_name: aya_mongo
+      image: mongo:3.2
+      ports:
+        - "27099:27017"
+
+## Gitlab CE CI
+#    aya_redis:
+#        restart: always
+#        image: redis:latest
+#        command:
+#          - --loglevel warning
+#        volumes:
+#          - ./gitlab/redis:/var/lib/redis:Z
+#
+#    aya_postgresql:
+#      restart: always
+#      image: postgres:latest
+#      volumes:
+#        - ./gitlab/postgresql:/var/lib/postgresql:Z
+#      ports:
+#        - "5432:5432"
+#      environment:
+#        - DB_USER=gitlab
+#        - DB_PASS=password
+#        - DB_NAME=gitlabhq_production
+#        - DB_EXTENSION=pg_trgm
+#
+#    aya_gitlab:
+#      restart: always
+#      image: gitlab/gitlab-ce:latest
+#      depends_on:
+#        - aya_redis
+#        - aya_postgresql
+#      ports:
+#        - "10080:80"
+#        - "10022:22"
+#      volumes:
+#        - ./gitlab/gitlab:/home/git/data:Z
+#      environment:
+#        - DEBUG=false
+#
+#        - DB_ADAPTER=postgresql
+#        - DB_HOST=postgresql
+#        - DB_PORT=5432
+#        - DB_USER=gitlab
+#        - DB_PASS=password
+#        - DB_NAME=gitlabhq_production
+#
+#        - REDIS_HOST=redis
+#        - REDIS_PORT=6379
+#
+#        - TZ=Asia/Kolkata
+#        - GITLAB_TIMEZONE=Kolkata
+#
+#        - GITLAB_HTTPS=false
+#        - SSL_SELF_SIGNED=false
+#
+#        - GITLAB_HOST=localhost
+#        - GITLAB_PORT=10080
+#        - GITLAB_SSH_PORT=10022
+#        - GITLAB_RELATIVE_URL_ROOT=
+#        - GITLAB_SECRETS_DB_KEY_BASE=long-and-random-alphanumeric-string
+#
+#        - GITLAB_ROOT_PASSWORD=
+#        - GITLAB_ROOT_EMAIL=
+#
+#        - GITLAB_NOTIFY_ON_BROKEN_BUILDS=true
+#        - GITLAB_NOTIFY_PUSHER=false
+#
+#        - GITLAB_EMAIL=notifications@example.com
+#        - GITLAB_EMAIL_REPLY_TO=noreply@example.com
+#        - GITLAB_INCOMING_EMAIL_ADDRESS=reply@example.com
+#
+#        - GITLAB_BACKUP_SCHEDULE=daily
+#        - GITLAB_BACKUP_TIME=01:00
+#
+#        - SMTP_ENABLED=true
+#        - SMTP_DOMAIN=www.example.com
+#        - SMTP_HOST=smtp.gmail.com
+#        - SMTP_PORT=587
+#        - SMTP_USER=mailer@example.com
+#        - SMTP_PASS=password
+#        - SMTP_STARTTLS=true
+#        - SMTP_AUTHENTICATION=login
+#
+#        - IMAP_ENABLED=false
+#        - IMAP_HOST=imap.gmail.com
+#        - IMAP_PORT=993
+#        - IMAP_USER=mailer@example.com
+#        - IMAP_PASS=password
+#        - IMAP_SSL=true
+#        - IMAP_STARTTLS=false
+#
+#        - OAUTH_ENABLED=false
+#        - OAUTH_AUTO_SIGN_IN_WITH_PROVIDER=
+#        - OAUTH_ALLOW_SSO=
+#        - OAUTH_BLOCK_AUTO_CREATED_USERS=true
+#        - OAUTH_AUTO_LINK_LDAP_USER=false
+#        - OAUTH_AUTO_LINK_SAML_USER=false
+#        - OAUTH_EXTERNAL_PROVIDERS=
+#
+#        - OAUTH_CAS3_LABEL=cas3
+#        - OAUTH_CAS3_SERVER=
+#        - OAUTH_CAS3_DISABLE_SSL_VERIFICATION=false
+#        - OAUTH_CAS3_LOGIN_URL=/cas/login
+#        - OAUTH_CAS3_VALIDATE_URL=/cas/p3/serviceValidate
+#        - OAUTH_CAS3_LOGOUT_URL=/cas/logout
+#
+#        - OAUTH_GOOGLE_API_KEY=
+#        - OAUTH_GOOGLE_APP_SECRET=
+#        - OAUTH_GOOGLE_RESTRICT_DOMAIN=
+#
+#        - OAUTH_FACEBOOK_API_KEY=
+#        - OAUTH_FACEBOOK_APP_SECRET=
+#
+#        - OAUTH_TWITTER_API_KEY=
+#        - OAUTH_TWITTER_APP_SECRET=
+#
+#        - OAUTH_GITHUB_API_KEY=
+#        - OAUTH_GITHUB_APP_SECRET=
+#        - OAUTH_GITHUB_URL=
+#        - OAUTH_GITHUB_VERIFY_SSL=
+#
+#        - OAUTH_GITLAB_API_KEY=
+#        - OAUTH_GITLAB_APP_SECRET=
+#
+#        - OAUTH_BITBUCKET_API_KEY=
+#        - OAUTH_BITBUCKET_APP_SECRET=
+#
+#        - OAUTH_SAML_ASSERTION_CONSUMER_SERVICE_URL=
+#        - OAUTH_SAML_IDP_CERT_FINGERPRINT=
+#        - OAUTH_SAML_IDP_SSO_TARGET_URL=
+#        - OAUTH_SAML_ISSUER=
+#        - OAUTH_SAML_LABEL="Our SAML Provider"
+#        - OAUTH_SAML_NAME_IDENTIFIER_FORMAT=urn:oasis:names:tc:SAML:2.0:nameid-format:transient
+#        - OAUTH_SAML_GROUPS_ATTRIBUTE=
+#        - OAUTH_SAML_EXTERNAL_GROUPS=
+#        - OAUTH_SAML_ATTRIBUTE_STATEMENTS_EMAIL=
+#        - OAUTH_SAML_ATTRIBUTE_STATEMENTS_NAME=
+#        - OAUTH_SAML_ATTRIBUTE_STATEMENTS_FIRST_NAME=
+#        - OAUTH_SAML_ATTRIBUTE_STATEMENTS_LAST_NAME=
+#
+#        - OAUTH_CROWD_SERVER_URL=
+#        - OAUTH_CROWD_APP_NAME=
+#        - OAUTH_CROWD_APP_PASSWORD=
+#
+#        - OAUTH_AUTH0_CLIENT_ID=
+#        - OAUTH_AUTH0_CLIENT_SECRET=
+#        - OAUTH_AUTH0_DOMAIN=
+#
+#        - OAUTH_AZURE_API_KEY=
+#        - OAUTH_AZURE_API_SECRET=
+#        - OAUTH_AZURE_TENANT_ID=
