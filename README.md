@@ -26,6 +26,11 @@ Add www.app.dev to the hosts file :
 ```bash
 $ sudo vi /etc/hosts  # add 127.0.0.1 www.app.dev
 ```
+To preview the demo :
+
+```bash
+http://www.app.dev:8099/
+```
 
 SSH on aya_app container :
 
@@ -40,6 +45,3 @@ To stop all Docker containers:
 ```bash
 $ docker stop $(docker ps -a -q)
 ```
-
-
-## to be continued

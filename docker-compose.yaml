@@ -3,7 +3,7 @@ services:
     aya_front:
       image: nginx:latest
       ports:
-        - "80:80"
+        - "8099:80"
       links:
         - aya_app
       volumes:
@@ -21,6 +21,10 @@ services:
         - "./www/app:/var/www/app"
       ports:
         - "9099:9000"
+      environment:
+        - APP_ENV=dev
+        - APP_DEBUG=0
+        - APP_SECRET=83512d52ee8797e6e9de2322dc781885
       working_dir: "/var/www/app"
 
     aya_mariadb:
